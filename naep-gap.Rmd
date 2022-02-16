@@ -1,0 +1,411 @@
+---
+title: "CT Achievement Gap: NAEP 4th Grade Reading Scores"
+author: David Braze
+  
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{css echo=FALSE}
+
+h3  {
+
+	font-size: 100px;
+	
+}
+
+```
+
+```{r setup, include=FALSE}
+
+library(dplyr)
+library(readxl)
+library(stringr)
+library(forcats)
+
+library(flexdashboard)
+library(ggplot2)
+library(gghighlight)
+library(plotly)
+library(FDBpub)
+
+theme_set(FDBpub::theme_fdbplot())
+
+```
+
+```{r read-data}
+
+##### 4th grade reading scores for each state by race/ethnicity
+## Data downloaded manually from https://www.nationsreportcard.gov/ndecore/xplore/NDE
+## See notes in that file.
+
+## subgroups: race/ethnicity
+D0a <- read_xls("NDECoreExcel_Reading-Grade4-Raceethnicity-used-to-report-tr_20220208182109.Xls",
+                sheet=1, range="A9:D5097", col_types="text")
+D1a <-
+    D0a %>%
+    rename_all(tolower) %>%
+    rename("race.ethnicity" = "race/ethnicity used to report trends, school-reported",
+           "avg.scale.score" = "average scale score") %>%
+    mutate(accommodations.permitted = as.factor(if_else(str_length(year)==5, "no", "yes")),
+           year = as.integer(str_extract(year, "^[0-9]{4}")),
+           avg.scale.score = as.numeric(avg.scale.score))
+
+## All students combined
+D0b <- read_xls("NDECoreExcel_Reading, Grade 4, All students - 2_20220208181010.Xls",
+                sheet=1, range="A9:D857", col_types="text")
+D1b <-
+    D0b %>%
+    rename_all(tolower) %>% 
+    rename("race.ethnicity" = "all students",
+           "avg.scale.score" = "average scale score") %>%
+    mutate(accommodations.permitted = as.factor(if_else(str_length(year)==5, "no", "yes")),
+           year = as.integer(str_extract(year, "^[0-9]{4}")),
+           avg.scale.score = as.numeric(avg.scale.score))
+
+## subgroups: Title 1
+D0c <- read_xls("NDECoreExcel_Reading, Grade 4, Receive Title I funding_20220211224354.Xls",
+                sheet=1, range="A9:D2553", col_types="text")
+
+D1c <-
+    D0c %>%
+    rename_all(tolower) %>%
+    rename("title1" = "receive title i funding",
+           "avg.scale.score" = "average scale score") %>%
+    mutate(accommodations.permitted = as.factor(if_else(str_length(year)==5, "no", "yes")),
+           year = as.integer(str_extract(year, "^[0-9]{4}")),
+           avg.scale.score = as.numeric(avg.scale.score))  %>%
+    mutate(title1 = fct_relevel(title1, "No", after = Inf),
+           jurisdiction = fct_relabel(jurisdiction, ~gsub("District of Columbia", "DC", .x)),
+           jurisdiction = fct_relabel(jurisdiction, ~gsub("National", "National Avg.", .x)),           
+           )  %>%
+    arrange(jurisdiction, year, title1) 
+
+## race/enthnicity
+D2 <-
+    full_join(D1a, D1b) %>%
+    mutate(jurisdiction = fct_relabel(jurisdiction, ~gsub("District of Columbia", "DC", .x)),
+           jurisdiction = fct_relabel(jurisdiction, ~gsub("National", "National Avg.", .x)),           
+           )  %>%
+    arrange(jurisdiction, year, race.ethnicity)
+
+## title 1
+D3 <- D1c
+
+```
+
+
+# Overall Scores by State
+
+## Column {data-width=750}
+
+### **All-student Reading Performance by State and Year** 
+	
+```{r overall-by-state}
+
+D2.ctx  <- 
+    D2 %>%
+    filter(race.ethnicity == "All students",
+           year >= 2003) %>%
+    mutate(picks = case_when(jurisdiction == "Connecticut" ~ "B",
+                             jurisdiction == "National Avg." ~ "A",
+                             !jurisdiction %in% c("Connecticut", "National Avg.") ~ "C")) %>%
+    group_by(year) %>%
+    mutate(rank = min_rank(desc(avg.scale.score))) %>%
+    ungroup()
+
+p1 <- 
+    D2.ctx %>%
+    ggplot(aes(x=year, y=avg.scale.score,
+               group=jurisdiction, color=picks, alpha=picks,
+               text=paste0(as.character(jurisdiction),
+                           "\n   Year: ", formatC(year, format="d"),
+                           "\n   Score: ", formatC(avg.scale.score, format="f", digits=2),
+                           "\n   Rank: ", formatC(rank, format="d")))) +
+    geom_point() +
+    geom_line(size=1.1) +
+    scale_color_manual(values=c(A = "black", B = "blue", C = "orange")) +
+    scale_alpha_manual(values=c(A = 3/4, B = 3/4, C = 1/5)) +
+    scale_x_continuous(breaks=seq(2003, 2019, 2), name="") +
+    labs(title="4th Grade Reading (NAEP) 2003-19",
+         subtitle="State Averages") +
+    ylab ("Average 4th Grade Reading Scores") 
+
+p1 <- ggplotly(p1, tooltip = c("text"), layerData=1) %>%
+    hide_legend() %>%
+    config(modeBarButtonsToRemove = c('zoomIn2d', 'zoomOut2d', 'pan2d',
+                                      'select2d', 'lasso2d',
+                                      'hoverCompare', 'hoverClosestCartesian')) %>%
+    layout(xaxis = list(fixedrange = TRUE),
+           yaxis = list(fixedrange = TRUE))
+
+
+p1
+
+if(FALSE) {
+
+    schema(p1, jsonedit=TRUE)
+
+    plotly_data(p1)
+
+    plotly_json(p1)
+}
+
+
+```
+
+## Column {data-width=250}
+
+### **Notes** 
+
+Figure shows average NAEP 4th grade reading scores by state, including District of Columbia (DC) and Dept. of Defence Educational Authority (DoDEA). 
+
+  * Connecticut is highlighted in blue. National average is in black.
+  
+  * Hover over data points for exact averages and ranks (higher rank is better).
+  
+Connecticut's performance overall seems pretty good, but disaggregation by race or by Title I status of schools tells a more troubling story; see following pages.
+
+# Gap: Black vs. White
+
+## Column {data-width=750}
+
+### **Connecticut in Context** 
+
+```{r}
+ 
+D2.bw <-
+    D2 %>%
+    filter(race.ethnicity %in% c("Black", "White"),
+           year == 2019) %>%
+    group_by(jurisdiction) %>%
+    mutate(wscore = max(avg.scale.score),
+           bscore = min(avg.scale.score),
+           wbdiff = diff(avg.scale.score)) %>%
+    ungroup() %>%
+    mutate(jurisdiction = fct_reorder(jurisdiction, wbdiff),
+           rank.gap = ceiling(rank(wbdiff)/2)) %>%
+    mutate(picks = case_when(jurisdiction == "Connecticut" ~ "B",
+                             jurisdiction == "National Avg." ~ "A",
+                             !jurisdiction %in% c("Connecticut", "National Avg.") ~ "C")) %>%
+    group_by(jurisdiction)
+ 
+p2 <-
+    D2.bw %>%
+    ggplot(aes(x=jurisdiction, y=avg.scale.score, alpha=picks,
+               group=jurisdiction, color=race.ethnicity,
+               text=paste0(as.character(jurisdiction),
+                           "\n   Black: ", formatC(bscore, format="f", digits=2),
+                           "\n   White: ", formatC(wscore, format="f", digits=2),
+                           "\n   Gap: ", formatC(wbdiff, format="f", digits=2),
+                           "\n   Rank: ", formatC(rank.gap, format="d")
+                           ))) +
+    geom_line(color="black") +
+    geom_point(size=2) +
+    scale_alpha_manual(values=c(A = 1, B = 1, C = 1/4)) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.4)) +
+    labs(title="Gap in NAEP 4th Grade Reading Scores by State (2019)") +
+    ylab ("Average 4th Grade Reading Scores") +
+    xlab ("")
+
+ggplotly(p2, tooltip="text") %>%
+    hide_legend() %>%
+    config(modeBarButtonsToRemove = c('zoomIn2d', 'zoomOut2d', 'pan2d',
+                                      'select2d', 'lasso2d',
+                                      'hoverCompare', 'hoverClosestCartesian')) %>%
+    layout(xaxis = list(fixedrange = TRUE),
+           yaxis = list(fixedrange = TRUE))
+
+
+```
+
+
+### **Connecticut Gap over Time**
+
+```{r}
+
+D2.ct <-
+    D2 %>%
+    filter(race.ethnicity %in% c("Black", "White"),
+           jurisdiction == "Connecticut",
+           year >= 2003) %>%
+    group_by(year) %>%
+    mutate(wscore = max(avg.scale.score),
+           bscore = min(avg.scale.score),
+           wbdiff = diff(avg.scale.score)) %>%
+    ungroup() %>%
+    mutate(picks = case_when(jurisdiction == "Connecticut" ~ "B",
+                             jurisdiction == "National Avg." ~ "A",
+                             !jurisdiction %in% c("Connecticut", "National Avg.") ~ "C"))
+
+p3 <-
+    D2.ct %>%
+    ggplot(aes(x=year, y=avg.scale.score, alpha=picks,
+               group=year, color=race.ethnicity,
+               text=paste0(as.character(jurisdiction),
+                           "\n  Black: ", formatC(bscore, format="f", digits=2),
+                           "\n  White: ", formatC(wscore, format="f", digits=2),
+                           "\n  Gap: ", formatC(wbdiff, format="f", digits=2)                           
+                           ))) +
+    geom_line(color="black") +
+    geom_point(size=2) +
+    scale_alpha_manual(values=c(A = 1, B = 1, C = 1/4)) +
+    scale_x_continuous(breaks=seq(2003, 2019, 2), name="") +
+    theme_minimal() +
+    ## theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.4)) +
+    labs(title="Gap in CT 4th Grade Reading Scores by Year") +
+    ylab ("Average 4th Grade Reading Scores") +
+    xlab ("")
+
+ggplotly(p3, tooltip="text") %>%
+    hide_legend() %>%
+    config(modeBarButtonsToRemove = c('zoomIn2d', 'zoomOut2d', 'pan2d',
+                                      'select2d', 'lasso2d',
+                                      'hoverCompare', 'hoverClosestCartesian')) %>%
+    layout(xaxis = list(fixedrange = TRUE),
+           yaxis = list(fixedrange = TRUE))
+```
+
+## Column {data-width=250}
+
+### **Notes**
+
+#### Upper Panel
+
+States are ranked from smallest gap (leftmost) to largest (rightmost). Higher rank as displayed in tooltip indicates larger gap in achievement.
+
+Samples of black students for 10 states (at the far right) were too small to reliably estimate state averages for the group.
+
+Among the 42 jurisdictions (40 states plus DC and DoDEA) with a calculable black/white achievement gap, Connecticut's is the 6th largest.
+
+#### Lower Panel
+
+Figure shows the magnitude of Connecticut's achievement gap in NAEP 4th grade reading scores for White vs. African American students over the most recent 18 year period. 
+
+Connecticut's gap is relatively intransigent over the 18 year period, although there may be some slight trend toward improvement.
+
+# Gap: Title 1 (<= 40%)
+
+## Column {data-width=750}
+
+### **Connecticut in Context** 
+
+```{r title1-lt40-by-state}
+ 
+D3.title1 <-
+    D3 %>%
+    filter(title1 %in% c("No", "Yes, for students"), ## <= 40%
+           year == 2019) %>%
+    group_by(jurisdiction) %>%
+    mutate(title1.n = max(avg.scale.score),
+           title1.y = min(avg.scale.score),
+           title1.diff = abs(diff(avg.scale.score))) %>%
+    ungroup() %>%
+    mutate(jurisdiction = fct_reorder(jurisdiction, title1.diff),
+           rank.gap = ceiling(rank(title1.diff)/2)) %>%
+    mutate(picks = case_when(jurisdiction == "Connecticut" ~ "B",
+                             jurisdiction == "National Avg." ~ "A",
+                             !jurisdiction %in% c("Connecticut", "National Avg.") ~ "C")) %>%
+    group_by(jurisdiction)
+ 
+p4 <-
+    D3.title1 %>%
+    ggplot(aes(x=jurisdiction, y=avg.scale.score, alpha=picks,
+               group=jurisdiction, color=title1,
+               text=paste0(as.character(jurisdiction),
+                           "\n   Title 1: ", formatC(title1.y, format="f", digits=2),
+                           "\n   ¬Title 1: ", formatC(title1.n, format="f", digits=2),
+                           "\n   Gap: ", formatC(title1.diff, format="f", digits=2),
+                           "\n   Rank: ", formatC(rank.gap, format="d")
+                           ))) +
+    geom_line(color="black") +
+    geom_point(size=2) +
+    scale_alpha_manual(values=c(A = 1, B = 1, C = 1/4)) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.4)) +
+    labs(title="Title 1 (<= 40%) Gap in NAEP 4th Grade Reading Scores by State -- 2019") +
+    ylab ("Average 4th Grade Reading Scores") +
+    xlab ("")
+
+ggplotly(p4, tooltip="text") %>%
+    hide_legend() %>%
+    config(modeBarButtonsToRemove = c('zoomIn2d', 'zoomOut2d', 'pan2d',
+                                      'select2d', 'lasso2d',
+                                      'hoverCompare', 'hoverClosestCartesian')) %>%
+    layout(xaxis = list(fixedrange = TRUE),
+           yaxis = list(fixedrange = TRUE))
+
+
+```
+
+### **Connecticut Gap over Time**
+
+```{r title1-lt40-ct}
+
+D3.ct <-
+    D3 %>%
+    filter(title1 %in% c("No", "Yes, for students"),
+           jurisdiction == "Connecticut",
+           year >= 2003) %>%
+    group_by(year) %>%
+    mutate(title1.n = max(avg.scale.score),
+           title1.y = min(avg.scale.score),
+           title1.diff = abs(diff(avg.scale.score))) %>%
+    ungroup() %>%
+    mutate(picks = case_when(jurisdiction == "Connecticut" ~ "B",
+                             jurisdiction == "National Avg." ~ "A",
+                             !jurisdiction %in% c("Connecticut", "National Avg.") ~ "C"))
+
+p5 <-
+    D3.ct %>%
+    ggplot(aes(x=year, y=avg.scale.score, alpha=picks,
+               group=year, color=title1,
+               text=paste0(as.character(jurisdiction),
+                           "\n  Title 1: ", formatC(title1.y, format="f", digits=2),
+                           "\n  ¬Title 1: ", formatC(title1.n, format="f", digits=2),
+                           "\n  Gap: ", formatC(title1.diff, format="f", digits=2) 
+                           ))) +
+    geom_line(color="black") +
+    geom_point(size=2) +
+    scale_alpha_manual(values=c(A = 1, B = 1, C = 1/4)) +
+    scale_x_continuous(breaks=seq(2003, 2019, 2), name="") +
+    theme_minimal() +
+    ## theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.4)) +
+    labs(title="Gap in CT 4th Grade Reading Scores by Year") +
+    ylab ("Average 4th Grade Reading Scores") +
+    xlab ("")
+
+ggplotly(p5, tooltip="text") %>%
+    hide_legend() %>%
+    config(modeBarButtonsToRemove = c('zoomIn2d', 'zoomOut2d', 'pan2d',
+                                      'select2d', 'lasso2d',
+                                      'hoverCompare', 'hoverClosestCartesian')) %>%
+    layout(xaxis = list(fixedrange = TRUE),
+           yaxis = list(fixedrange = TRUE))
+
+```
+
+## Column {data-width=250}
+
+### **Notes**
+
+Title 1 of the Elementary and Secondary Education Act provides funds to school systems with high percentages of students from low income families so that these schools can give extra instructional support for low-achieving children. There are specific formula that determine whether a school qualifies for Title 1 funds. These vary somewhat for the four Title 1 funding programs, but all take into account the proportion of low-income students in the school, as well as the governing state's own funding formula.
+
+In general, a school receiving Title 1 funds is required to focus expendature of that money on students at greatest risk of academic difficulties. But, if low-income students make up more than 40% of a school's student population, then it may use Title 1 funds throughout the school as a whole. 
+
+**The figures on this page contrast schools that receive no Title 1 funds at all with Title 1 schools where fewer than 40% of students are low-income.**
+
+https://nces.ed.gov/fastfacts/display.asp?id=158
+
+https://www2.ed.gov/programs/titleiparta/index.html
+
+# About the NAEP
+
+The National Assessment of Educational Progress (NAEP) is a federally mandated project administered by the National Center for Education Statistics (NCES) within the Department of Education's Institute of Education Sciences. Initiated in 1969, it serves as a nationally representative assessment of what U.S. students know and can do in various academic subjects, and how that changes over time. The NAEP is designed primarily to provide group-level data on student achievement across subjects. 
+
+Periodic reports based on NAEP results are commonly known as **The Nation's Report Card**. Reports typically aggregate data at the state level. The NCES does not release NAEP results for individual students, classrooms, or schools. For each state, NCES does report NAEP results for various demographic groups, including divisions by gender, socioeconomic status, and race/ethnicity. 
+
+Assessment of mathematics, reading, and science takes place in odd numbered calendar years. These core assessments are collected for grades 4, 8, and 12. Other assessments occur less frequently and in fewer grades, and typically in even numbered years. Subjects include the arts, civics, economics, geography, technology and engineering, and U.S. history.
