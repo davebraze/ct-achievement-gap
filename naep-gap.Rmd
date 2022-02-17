@@ -24,6 +24,7 @@ library(dplyr)
 library(readxl)
 library(stringr)
 library(forcats)
+library(here)
 
 library(flexdashboard)
 library(ggplot2)
@@ -42,7 +43,7 @@ theme_set(FDBpub::theme_fdbplot())
 ## See notes in that file.
 
 ## subgroups: race/ethnicity
-D0a <- read_xls("NDECoreExcel_Reading-Grade4-Raceethnicity-used-to-report-tr_20220208182109.Xls",
+D0a <- read_xls(here("data", "NDECoreExcel_Reading-Grade4-Raceethnicity-used-to-report-tr_20220208182109.Xls"),
                 sheet=1, range="A9:D5097", col_types="text")
 D1a <-
     D0a %>%
@@ -54,7 +55,7 @@ D1a <-
            avg.scale.score = as.numeric(avg.scale.score))
 
 ## All students combined
-D0b <- read_xls("NDECoreExcel_Reading, Grade 4, All students - 2_20220208181010.Xls",
+D0b <- read_xls(here("data", "NDECoreExcel_Reading, Grade 4, All students - 2_20220208181010.Xls"),
                 sheet=1, range="A9:D857", col_types="text")
 D1b <-
     D0b %>%
@@ -66,7 +67,7 @@ D1b <-
            avg.scale.score = as.numeric(avg.scale.score))
 
 ## subgroups: Title 1
-D0c <- read_xls("NDECoreExcel_Reading, Grade 4, Receive Title I funding_20220211224354.Xls",
+D0c <- read_xls(here("data", "NDECoreExcel_Reading, Grade 4, Receive Title I funding_20220211224354.Xls"),
                 sheet=1, range="A9:D2553", col_types="text")
 
 D1c <-
