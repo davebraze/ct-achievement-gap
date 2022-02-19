@@ -34,6 +34,10 @@ library(FDBpub)
 
 theme_set(FDBpub::theme_fdbplot())
 
+## TODO
+## o try one of the MetBrewer color palettes
+## o 
+
 ```
 
 ```{r read-data}
@@ -165,7 +169,7 @@ Figure shows average NAEP 4th grade reading scores by state, including District 
 
   * Connecticut is highlighted in blue. National average is in black.
   
-  * Hover over data points for exact averages and ranks (higher rank is better).
+  * Hover over data points for exact averages and ranks (lower rank is better).
   
 Connecticut's performance overall seems pretty good, but disaggregation by race or by Title I status of schools tells a more troubling story; see following pages.
 
@@ -276,17 +280,19 @@ ggplotly(p3, tooltip="text") %>%
 
 #### Upper Panel
 
-States are ranked from smallest gap (leftmost) to largest (rightmost). Higher rank as displayed in tooltip indicates larger gap in achievement.
+Connecticut and the National Average are highlighted.
+
+Among the 42 jurisdictions, 40 states plus DC and DoDEA, with a calculable black/white achievement gap, Connecticut's is the 6th largest.
+
+States are ranked from smallest gap (leftmost) to largest (rightmost). Lower rank as displayed in tooltip indicates smaller gap in achievement (lower rank is better).
 
 Samples of black students for 10 states (at the far right) were too small to reliably estimate state averages for the group.
-
-Among the 42 jurisdictions (40 states plus DC and DoDEA) with a calculable black/white achievement gap, Connecticut's is the 6th largest.
 
 #### Lower Panel
 
 Figure shows the magnitude of Connecticut's achievement gap in NAEP 4th grade reading scores for White vs. African American students over the most recent 18 year period. 
 
-Connecticut's gap is relatively intransigent over the 18 year period, although there may be some slight trend toward improvement.
+Connecticut's gap is relatively stable over the 18 year period, although there may be some slight trend toward improvement.
 
 # Gap: Title 1 (<= 40%)
 
@@ -393,11 +399,12 @@ ggplotly(p5, tooltip="text") %>%
 
 ### **Notes**
 
+
+**The figures on this page contrast schools that receive no Title 1 funds at all with Title 1 schools where fewer than 40% of students are low-income.**
+
 Title 1 of the Elementary and Secondary Education Act provides funds to school systems with high percentages of students from low income families so that these schools can give extra instructional support for low-achieving children. There are specific formula that determine whether a school qualifies for Title 1 funds. These vary somewhat for the four Title 1 funding programs, but all take into account the proportion of low-income students in the school, as well as the governing state's own funding formula.
 
 In general, a school receiving Title 1 funds is required to focus expendature of that money on students at greatest risk of academic difficulties. But, if low-income students make up more than 40% of a school's student population, then it may use Title 1 funds throughout the school as a whole. 
-
-**The figures on this page contrast schools that receive no Title 1 funds at all with Title 1 schools where fewer than 40% of students are low-income.**
 
 https://nces.ed.gov/fastfacts/display.asp?id=158
 
