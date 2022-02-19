@@ -38,10 +38,9 @@ html2web:
 	mv --backup index.html ./docs/.
 	rm -f tmp0.html
 
-publish: html html2web
+publish: flex html2web
 # stage and commit webpage changes, then push changes to github
 	git add --verbose 'docs/*'
-	git add --verbose '03-other-source-data/*'
 	git commit --verbose -m "update webpage"
 	git push --verbose --all
 
