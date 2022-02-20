@@ -30,6 +30,7 @@ library(flexdashboard)
 library(ggplot2)
 library(gghighlight)
 library(plotly)
+library(MetBrewer)
 library(FDBpub)
 
 theme_set(FDBpub::theme_fdbplot())
@@ -131,8 +132,9 @@ p1 <-
                            "\n   Rank: ", formatC(rank, format="d")))) +
     geom_point() +
     geom_line(size=1.1) +
-    scale_color_manual(values=c(A = "black", B = "blue", C = "orange")) +
-    scale_alpha_manual(values=c(A = 3/4, B = 3/4, C = 1/5)) +
+    ## scale_color_manual(values=c(A = "black", B = "blue", C = "orange")) +
+    scale_color_manual(values=met.brewer("VanGogh2", 3)) +
+    scale_alpha_manual(values=c(A = .9, B = .9, C = 1/8)) +
     scale_x_continuous(breaks=seq(2003, 2019, 2), name="") +
     labs(title="4th Grade Reading (NAEP) 2003-19",
          subtitle="State Averages") +
@@ -167,7 +169,7 @@ if(FALSE) {
 
 Figure shows average NAEP 4th grade reading scores by state, including District of Columbia (DC) and Dept. of Defence Educational Authority (DoDEA). 
 
-  * Connecticut is highlighted in blue. National average is in black.
+  * Connecticut is highlighted in yellow. National average is in red.
   
   * Hover over data points for exact averages and ranks (lower rank is better).
   
@@ -209,6 +211,7 @@ p2 <-
                            ))) +
     geom_line(color="black") +
     geom_point(size=2) +
+    scale_color_manual(values=rev(met.brewer("VanGogh2", 2))) +
     scale_alpha_manual(values=c(A = 1, B = 1, C = 1/4)) +
     theme_minimal() +
     theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.4)) +
@@ -257,6 +260,7 @@ p3 <-
                            ))) +
     geom_line(color="black") +
     geom_point(size=2) +
+    scale_color_manual(values=rev(met.brewer("VanGogh2", 2))) +
     scale_alpha_manual(values=c(A = 1, B = 1, C = 1/4)) +
     scale_x_continuous(breaks=seq(2003, 2019, 2), name="") +
     theme_minimal() +
@@ -330,6 +334,7 @@ p4 <-
                            ))) +
     geom_line(color="black") +
     geom_point(size=2) +
+    scale_color_manual(values=rev(met.brewer("VanGogh2", 2))) +
     scale_alpha_manual(values=c(A = 1, B = 1, C = 1/4)) +
     theme_minimal() +
     theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.4)) +
@@ -377,6 +382,7 @@ p5 <-
                            ))) +
     geom_line(color="black") +
     geom_point(size=2) +
+    scale_color_manual(values=rev(met.brewer("VanGogh2", 2))) +
     scale_alpha_manual(values=c(A = 1, B = 1, C = 1/4)) +
     scale_x_continuous(breaks=seq(2003, 2019, 2), name="") +
     theme_minimal() +
