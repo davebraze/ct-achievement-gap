@@ -28,7 +28,7 @@ library(here)
 
 library(flexdashboard)
 library(ggplot2)
-library(gghighlight)
+## library(gghighlight)
 library(plotly)
 library(MetBrewer)
 library(FDBpub)
@@ -416,10 +416,45 @@ https://nces.ed.gov/fastfacts/display.asp?id=158
 
 https://www2.ed.gov/programs/titleiparta/index.html
 
-# About the NAEP
+# About
+
+## Column {data-width=500}
+
+### About the NAEP
 
 The National Assessment of Educational Progress (NAEP) is a federally mandated project administered by the National Center for Education Statistics (NCES) within the Department of Education's Institute of Education Sciences. Initiated in 1969, it serves as a nationally representative assessment of what U.S. students know and can do in various academic subjects, and how that changes over time. The NAEP is designed primarily to provide group-level data on student achievement across subjects. 
 
 Periodic reports based on NAEP results are commonly known as **The Nation's Report Card**. Reports typically aggregate data at the state level. The NCES does not release NAEP results for individual students, classrooms, or schools. For each state, NCES does report NAEP results for various demographic groups, including divisions by gender, socioeconomic status, and race/ethnicity. 
 
 Assessment of mathematics, reading, and science takes place in odd numbered calendar years. These core assessments are collected for grades 4, 8, and 12. Other assessments occur less frequently and in fewer grades, and typically in even numbered years. Subjects include the arts, civics, economics, geography, technology and engineering, and U.S. history.
+
+## Column {data-width=250}
+
+### About the Author
+
+David Braze, Ph.D., is a researcher and consultant with a background in linguistics and reading research. He has more than 25 years experience investigating the cognitive foundations of language, literacy, and educational achievement, including 17 years as a Senior Research Scientist at [Haskins Laboratories](https://haskinslabs.org/). His research at Haskins, funded by the National Institutes of Health, emphasized the neurobiology of language and reading and applications to education. Dr. Braze consults widely for business, government, and non-profit sectors. 
+
+|   email: davebraze@gmail.com
+|   website: [davebraze.org](https://davebraze.org/ "D. Braze's website")
+
+
+## Column {data-width=250}
+
+### About the Software
+
+All data summaries in this dashboard were carried out using the _R_ statistical environment, version `r paste(version$major, version$minor, sep=".")` [@cite_R]. The dashboard itself was produced using an Rmarkdown workflow. The following table lists the non-base R packages used in building the report. To see a full citation for a specific package, assuming you have both _R_ and the particular package installed, call (e.g.) _citation(dplyr)_ from the _R_ prompt. 
+
+```{r r-package-tab, include=TRUE}
+
+package_tab <-
+    sessioninfo::package_info() %>%
+    unclass() %>%
+    as_tibble() %>%
+    filter(attached == TRUE) %>%
+    select(package, ondiskversion, date) %>%
+    rename(version = ondiskversion)
+caption <- "R packages used in this dashboard."
+package_tab %>%
+    FDBpub::format_table(caption=caption, out_type=doc_type())
+
+```
