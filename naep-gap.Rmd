@@ -35,9 +35,6 @@ library(FDBpub)
 
 theme_set(FDBpub::theme_fdbplot())
 
-## TODO
-## o try one of the MetBrewer color palettes
-## o 
 
 ```
 
@@ -133,7 +130,7 @@ p1 <-
     geom_point() +
     geom_line(size=1.1) +
     ## scale_color_manual(values=c(A = "black", B = "blue", C = "orange")) +
-    scale_color_manual(values=met.brewer("VanGogh2", 3)) +
+    scale_color_manual(values=met.brewer("Tiepolo", 8)[c(1,8,4)]) +
     scale_alpha_manual(values=c(A = .9, B = .9, C = 1/8)) +
     scale_x_continuous(breaks=seq(2003, 2019, 2), name="") +
     labs(title="4th Grade Reading (NAEP) 2003-19",
@@ -169,13 +166,13 @@ if(FALSE) {
 
 Figure shows average NAEP 4th grade reading scores by state, including District of Columbia (DC) and Dept. of Defence Educational Authority (DoDEA). 
 
-  * Connecticut is highlighted in yellow. National average is in red.
+  * Connecticut is highlighted in blue. The national average is in red.
   
   * Hover over data points for exact averages and ranks (lower rank is better).
   
 Connecticut's performance overall seems pretty good, but disaggregation by race or by Title I status of schools tells a more troubling story; see following pages.
 
-# Gap: Black vs. White
+# Gap: Black/White
 
 ## Column {data-width=750}
 
@@ -211,11 +208,11 @@ p2 <-
                            ))) +
     geom_line(color="black") +
     geom_point(size=2) +
-    scale_color_manual(values=rev(met.brewer("VanGogh2", 2))) +
+    scale_color_manual(values=rev(met.brewer("Cassatt2", 2))) +
     scale_alpha_manual(values=c(A = 1, B = 1, C = 1/4)) +
     theme_minimal() +
     theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.4)) +
-    labs(title="Gap in NAEP 4th Grade Reading Scores by State (2019)") +
+    labs(title="Black/White Gap in NAEP 4th Grade Reading Scores by State -- 2019") +
     ylab ("Average 4th Grade Reading Scores") +
     xlab ("")
 
@@ -260,12 +257,12 @@ p3 <-
                            ))) +
     geom_line(color="black") +
     geom_point(size=2) +
-    scale_color_manual(values=rev(met.brewer("VanGogh2", 2))) +
+    scale_color_manual(values=rev(met.brewer("Cassatt2", 2))) +
     scale_alpha_manual(values=c(A = 1, B = 1, C = 1/4)) +
     scale_x_continuous(breaks=seq(2003, 2019, 2), name="") +
     theme_minimal() +
     ## theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.4)) +
-    labs(title="Gap in CT 4th Grade Reading Scores by Year") +
+    labs(title="Black/White Gap in CT 4th Grade Reading Scores by Year") +
     ylab ("Average 4th Grade Reading Scores") +
     xlab ("")
 
@@ -298,7 +295,7 @@ Figure shows the magnitude of Connecticut's achievement gap in NAEP 4th grade re
 
 Connecticut's gap is relatively stable over the 18 year period, although there may be some slight trend toward improvement.
 
-# Gap: Title 1 (<= 40%)
+# Gap: Title 1 (≤ 40%)
 
 ## Column {data-width=750}
 
@@ -334,11 +331,11 @@ p4 <-
                            ))) +
     geom_line(color="black") +
     geom_point(size=2) +
-    scale_color_manual(values=rev(met.brewer("VanGogh2", 2))) +
+    scale_color_manual(values=rev(met.brewer("Isfahan1", 2))) +
     scale_alpha_manual(values=c(A = 1, B = 1, C = 1/4)) +
     theme_minimal() +
     theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.4)) +
-    labs(title="Title 1 (<= 40%) Gap in NAEP 4th Grade Reading Scores by State -- 2019") +
+    labs(title="Title 1 (\u2264 40%) Gap in NAEP 4th Grade Reading Scores by State -- 2019") +
     ylab ("Average 4th Grade Reading Scores") +
     xlab ("")
 
@@ -382,12 +379,12 @@ p5 <-
                            ))) +
     geom_line(color="black") +
     geom_point(size=2) +
-    scale_color_manual(values=rev(met.brewer("VanGogh2", 2))) +
+    scale_color_manual(values=rev(met.brewer("Isfahan1", 2))) +
     scale_alpha_manual(values=c(A = 1, B = 1, C = 1/4)) +
     scale_x_continuous(breaks=seq(2003, 2019, 2), name="") +
     theme_minimal() +
     ## theme(axis.text.x = element_text(angle=90, hjust=1, vjust=.4)) +
-    labs(title="Gap in CT 4th Grade Reading Scores by Year") +
+    labs(title="Title 1 (\u2264 40%) Gap in CT 4th Grade Reading Scores by Year") +
     ylab ("Average 4th Grade Reading Scores") +
     xlab ("")
 
@@ -442,7 +439,7 @@ David Braze, Ph.D., is a researcher and consultant with a background in linguist
 
 ### About the Software
 
-All data summaries in this dashboard were carried out using the _R_ statistical environment, version `r paste(version$major, version$minor, sep=".")` [@cite_R]. The dashboard itself was produced using an Rmarkdown workflow. The following table lists the non-base R packages used in building the report. To see a full citation for a specific package, assuming you have both _R_ and the particular package installed, call (e.g.) _citation(dplyr)_ from the _R_ prompt. 
+All data summaries in this dashboard were carried out using the _R_ statistical environment, version `r paste(version$major, version$minor, sep=".")`. The dashboard itself was produced using an Rmarkdown workflow. The following table lists the non-base R packages used in building the dashboard. To see a full citation for a specific package, assuming you have both _R_ and the particular package installed, call (e.g.) `citation("dplyr")` from the _R_ prompt. 
 
 ```{r r-package-tab, include=TRUE}
 
