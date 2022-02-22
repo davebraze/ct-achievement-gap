@@ -1,3 +1,14 @@
+naep.red.cutscores <- function() {
+    ## Return cut scores for each reading achievement level in each grade.
+    ## Values from: https://www.nationsreportcard.gov/reading/nation/scores/
+
+    retval <- expand.grid(level=c("basic", "proficient", "advanced"),
+                          grade=c(4,8,12))
+
+    dplyr::tibble(retval,
+           cut=c(208L, 238L, 268L, 243L, 281L, 323L, 265L, 302L, 346L))
+
+}
 
 juris <- function() {
     ## Return a data.frame of jurisdictions recognized by the NAEP API,
