@@ -182,8 +182,10 @@ Connecticut's performance overall seems pretty good, but disaggregation by race 
 ```{r race-black-white-by-state}
 
 ## TODO:
-## Animate over year. For example see:
-## https://www.brucemeng.ca/post/animations-in-r/
+## • Animate over year. For example see:
+##   https://www.brucemeng.ca/post/animations-in-r/
+## • Filter by Grade. See example here:
+##   https://youtu.be/AVmfWL43B70
 
 D2.bw <-
     D2 %>%
