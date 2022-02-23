@@ -4,6 +4,7 @@ author: David Braze
   
 output: 
   flexdashboard::flex_dashboard:
+    theme: yeti
     orientation: columns
     vertical_layout: fill
 ---
@@ -178,8 +179,12 @@ Connecticut's performance overall seems pretty good, but disaggregation by race 
 
 ### **Connecticut in Context** 
 
-```{r}
- 
+```{r race-black-white-by-state}
+
+## TODO:
+## Animate over year. For example see:
+## https://www.brucemeng.ca/post/animations-in-r/
+
 D2.bw <-
     D2 %>%
     filter(race.ethnicity %in% c("Black", "White"),
@@ -230,7 +235,7 @@ ggplotly(p2, tooltip="text") %>%
 
 ### **Connecticut Gap over Time**
 
-```{r}
+```{r race-black-white-ct}
 
 D2.ct <-
     D2 %>%
@@ -419,9 +424,9 @@ https://www2.ed.gov/programs/titleiparta/index.html
 
 ### About the NAEP
 
-The National Assessment of Educational Progress (NAEP) is a federally mandated project administered by the National Center for Education Statistics (NCES) within the Department of Education's Institute of Education Sciences. Initiated in 1969, it serves as a nationally representative assessment of what U.S. students know and can do in various academic subjects, and how that changes over time. The NAEP is designed primarily to provide group-level data on student achievement across subjects. 
+The National Assessment of Educational Progress (NAEP) is a federally mandated project administered by the National Center for Education Statistics (NCES) within the Department of Education's Institute of Education Sciences. It was initiated in 1969 to serve as a nationally representative assessment of what U.S. students know and can do in various academic subjects, and how that changes over time. The NAEP is designed primarily to provide group-level data on student achievement across subjects. 
 
-Periodic reports based on NAEP results are commonly known as **The Nation's Report Card**. Report Cards typically aggregate data at the state level. The NCES does not release NAEP results for individual students, classrooms, or schools. For each state, NCES does report NAEP results for various demographic groups, including divisions by gender, socioeconomic status, and race/ethnicity. 
+Periodic reports based on NAEP results are commonly known as **The Nation's Report Card**. Report Cards typically aggregate data at the state level. The NCES does not release NAEP results for individual students, classrooms, or schools. For each state, NCES does report aggregate NAEP results for various demographic groups, including divisions by gender, socioeconomic status, and race/ethnicity. 
 
 Assessment of mathematics, reading, and science takes place in odd numbered calendar years. These core assessments are collected for grades 4, 8, and 12. Other assessments occur less frequently and in fewer grades, and typically in even numbered years. Subjects include the arts, civics, economics, geography, technology and engineering, and U.S. history.
 
@@ -439,7 +444,7 @@ David Braze, Ph.D., is a researcher and consultant with a background in linguist
 
 ### About the Software
 
-All data summaries in this dashboard were carried out using the _R_ statistical environment, version `r paste(version$major, version$minor, sep=".")`. The dashboard itself was produced using an Rmarkdown workflow. The following table lists the non-base R packages used in building the dashboard. To see a full citation for a specific package, assuming you have both _R_ and the particular package installed, call (e.g.) `citation("dplyr")` from the _R_ prompt. 
+All data summaries in this dashboard were produced with the _R_ statistical environment, version `r paste(version$major, version$minor, sep=".")`. The dashboard itself was made using an Rmarkdown workflow. The following table lists the non-base R packages used in building the dashboard. To see a full citation for a specific package, assuming you have both _R_ and the particular package installed, call (e.g.) `citation("dplyr")` from the _R_ prompt. 
 
 ```{r r-package-tab, include=TRUE}
 
