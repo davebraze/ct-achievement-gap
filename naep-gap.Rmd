@@ -187,6 +187,14 @@ Connecticut's performance overall seems pretty good, but disaggregation by race 
 ## • Filter by Grade. See example here:
 ##   https://youtu.be/AVmfWL43B70
 
+## Notes on barbell plots with plotly
+## • https://towardsdatascience.com/lollipop-dumbbell-charts-with-plotly-696039d5f85
+## • https://medium.com/@ginoasuncion/creating-a-dumbbell-plot-with-plotly-python-570ff768ff7e
+
+## Notes on other tools for interactive plots
+## • htmlwidgets:: http://www.htmlwidgets.org/
+## • Crosstalk:: https://rstudio.github.io/crosstalk/
+
 D2.bw <-
     D2 %>%
     filter(race.ethnicity %in% c("Black", "White"),
