@@ -176,11 +176,11 @@ Connecticut's performance overall seems pretty good, but disaggregation by race 
 # Gap: Black/White
 
 ## Column {data-width=750}
-
+ 
 ### **Connecticut in Context** 
 
 ```{r race-black-white-by-state}
-
+ 
 ## TODO:
 ## • Animate over year. For example see:
 ##   https://www.brucemeng.ca/post/animations-in-r/
@@ -194,6 +194,9 @@ Connecticut's performance overall seems pretty good, but disaggregation by race 
 ## Notes on other tools for interactive plots
 ## • htmlwidgets:: http://www.htmlwidgets.org/
 ## • Crosstalk:: https://rstudio.github.io/crosstalk/
+
+## Notes on css styling for, e.g., flexdashboard 
+## • bslib:: https://rstudio.github.io/bslib/ 
 
 D2.bw <-
     D2 %>%
@@ -210,7 +213,7 @@ D2.bw <-
                              jurisdiction == "National Avg." ~ "A",
                              !jurisdiction %in% c("Connecticut", "National Avg.") ~ "C")) %>%
     group_by(jurisdiction)
- 
+
 p2 <-
     D2.bw %>%
     ggplot(aes(x=jurisdiction, y=avg.scale.score, alpha=picks,
