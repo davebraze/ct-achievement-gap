@@ -194,6 +194,7 @@ Connecticut's performance overall seems pretty good, but disaggregation by race 
 ## Notes on other tools for interactive plots
 ## • htmlwidgets:: http://www.htmlwidgets.org/
 ## • Crosstalk:: https://rstudio.github.io/crosstalk/
+## • Crosstalk tutorial: https://emilyriederer.github.io/demo-crosstalk/tutorial/tutorial-rmd.html
 
 ## Notes on css styling for, e.g., flexdashboard 
 ## • bslib:: https://rstudio.github.io/bslib/ 
