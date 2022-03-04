@@ -29,13 +29,11 @@ library(here)
 
 library(flexdashboard)
 library(ggplot2)
-## library(gghighlight)
 library(plotly)
 library(MetBrewer)
 library(FDBpub)
 
 theme_set(FDBpub::theme_fdbplot())
-
 
 ```
 
