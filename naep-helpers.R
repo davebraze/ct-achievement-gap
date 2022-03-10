@@ -1,4 +1,6 @@
-naep.red.cutscores <- function() {
+library(dplyr)
+
+naep.read.cutscores <- function() {
     ## Return cut scores for each reading achievement level in each grade.
     ## Values from: https://www.nationsreportcard.gov/reading/nation/scores/
 
@@ -111,7 +113,7 @@ juris <- function() {
         matrix(juris0, ncol=2, byrow = TRUE,
                dimnames=list(NULL, c("code", "name"))) %>%
         as_tibble() %>%
-        mutate(type = case_when(
+        mutate(group = case_when(
                    str_detect(code, "^(X|Y|NL)") ~ "Metro",
                    code %in% c("NT", "NP", "NR") ~ "National",
                    code %in% c("AS", "GU", "PR", "VI") ~ "Territory",
@@ -124,23 +126,38 @@ juris <- function() {
 
 juris.by.type <- function(type=c("State", "National", "Metro", "Territory", "DoDEA")){
     ## Make it easy to pull jurisdictions by type.
-    pull(filter(juris(), type %in% type), code)
+    pull(filter(juris(), group %in% type), code)
 }
 
-my.query <- function(jur="CT", yr="current", grd="4") {
+my.query <- function(subj="reading",
+                     subscale="RRPCM",
+                     stat="MN:MN",
+                     grd="4",
+                     yr="current",
+                     var="SDRACE",
+                     jur="CT") {
     ## Build the 'query' portion of API call.
-    ## For now, only parameterized over jurisdiction, year, and grade.
-    ## See NAEP API docs for details:
+
+    ## See NAEP API docs for usable values, although their list not complete:
     ## https://www.nationsreportcard.gov/api_documentation.aspx
     retval <- paste("type=data",
-                    "subject=reading",
-                    "subscale=RRPCM",      ## RRPCM = composite scale
-                    "stattype=MN:MN",      ## return jurisdiction-wise mean values for 'subscale'
-                    paste0("grade=", grd), ## 4,8,12
-                    paste0("year=", yr),   ## 'current' == most recent year; can also give numeric YYYY
-                    "variable=SDRACE",
+                    paste0("subject=", subj),
+                    paste0("subscale=", subscale), ## RRPCM = composite scale
+                    paste0("stattype=", stat),     ## return jurisdiction-wise mean values for 'subscale'
+                    paste0("grade=", grd),         ## 4,8,12
+                    paste0("year=", yr),           ## 'current' == most recent year; can also give numeric YYYY
+                    paste0("variable=", var),      ## C051701 == Title 1 status; SDRACE == race/ethn for trends
                     paste0("jurisdiction=", jur),
                     sep="&")
     retval
-
 }
+
+resp.content.enc <- function(ll) {
+    ## This is hackish, but works for use cases that I've seen so far.
+    ## When no useful content is returned for a query, the content encoding
+    ## header will be missing. If useful content is present, then encoding is
+    ## "gzip".
+    if(is.null(ll$headers$"content-encoding")) NA_character_
+    else ll$headers$"content-encoding"
+}
+

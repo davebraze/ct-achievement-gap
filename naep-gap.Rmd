@@ -38,13 +38,13 @@ theme_set(FDBpub::theme_fdbplot())
 ```
 
 ```{r read-data}
-
+ 
 ##### 4th grade reading scores for each state by race/ethnicity
 ## Data downloaded manually from https://www.nationsreportcard.gov/ndecore/xplore/NDE
 ## See notes in that file.
 
 ## subgroups: race/ethnicity
-D0a <- read_xls(here("data", "NDECoreExcel_Reading-Grade4-Raceethnicity-used-to-report-tr_20220208182109.Xls"),
+D0a <- read_xls(here("00-data-cache", "NDECoreExcel_Reading-Grade4-Raceethnicity-used-to-report-tr_20220208182109.Xls"),
                 sheet=1, range="A9:D5097", col_types="text")
 D1a <-
     D0a %>%
@@ -56,7 +56,7 @@ D1a <-
            avg.scale.score = as.numeric(avg.scale.score))
 
 ## All students combined
-D0b <- read_xls(here("data", "NDECoreExcel_Reading, Grade 4, All students - 2_20220208181010.Xls"),
+D0b <- read_xls(here("00-data-cache", "NDECoreExcel_Reading, Grade 4, All students - 2_20220208181010.Xls"),
                 sheet=1, range="A9:D857", col_types="text")
 D1b <-
     D0b %>%
@@ -68,7 +68,7 @@ D1b <-
            avg.scale.score = as.numeric(avg.scale.score))
 
 ## subgroups: Title 1
-D0c <- read_xls(here("data", "NDECoreExcel_Reading, Grade 4, Receive Title I funding_20220211224354.Xls"),
+D0c <- read_xls(here("00-data-cache", "NDECoreExcel_Reading, Grade 4, Receive Title I funding_20220211224354.Xls"),
                 sheet=1, range="A9:D2553", col_types="text")
 
 D1c <-
@@ -163,7 +163,7 @@ if(FALSE) {
 
 ### **Notes** 
 
-Figure shows average NAEP 4th grade reading scores by state, including District of Columbia (DC) and Dept. of Defence Educational Authority (DoDEA). 
+This figure shows average NAEP 4th grade reading scores by state, plus the District of Columbia (DC) and the Dept. of Defence Educational Authority (DoDEA). 
 
   * Connecticut is highlighted in blue. The national average is in red.
   
@@ -290,6 +290,7 @@ ggplotly(p3, tooltip="text") %>%
                                       'hoverCompare', 'hoverClosestCartesian')) %>%
     layout(xaxis = list(fixedrange = TRUE),
            yaxis = list(fixedrange = TRUE))
+
 ```
 
 ## Column {data-width=250}
@@ -300,15 +301,15 @@ ggplotly(p3, tooltip="text") %>%
 
 Connecticut and the National Average are highlighted.
 
-Among the 42 jurisdictions, 40 states plus DC and DoDEA, with a calculable black/white achievement gap, Connecticut's is the 6th largest.
+Among the 42 jurisdictions, 40 states plus DC and DoDEA, with a calculable black/white achievement gap, Connecticut's is the 6th largest, 16 positions worse than the national average.
 
 States are ranked from smallest gap (leftmost) to largest (rightmost). Lower rank as displayed in tooltip indicates smaller gap in achievement (lower rank is better).
 
-Samples of black students for 10 states (at the far right) were too small to reliably estimate state averages for the group.
+Samples of black students for 10 states (at the far right) were too small to reliably estimate state averages for the group; no gap can be computed for these states.
 
 #### Lower Panel
 
-Figure shows the magnitude of Connecticut's achievement gap in NAEP 4th grade reading scores for White vs. African American students over the most recent 18 year period. 
+The lower figure shows the magnitude of Connecticut's achievement gap in NAEP 4th grade reading scores for White vs. African American students over the most recent 18 year period. 
 
 Connecticut's gap is relatively stable over the 18 year period, although there may be some slight trend toward improvement.
 
@@ -319,7 +320,7 @@ Connecticut's gap is relatively stable over the 18 year period, although there m
 ### **Connecticut in Context** 
 
 ```{r title1-lt40-by-state}
- 
+
 D3.title1 <-
     D3 %>%
     filter(title1 %in% c("No", "Yes, for students"), ## <= 40%
@@ -335,7 +336,7 @@ D3.title1 <-
                              jurisdiction == "National Avg." ~ "A",
                              !jurisdiction %in% c("Connecticut", "National Avg.") ~ "C")) %>%
     group_by(jurisdiction)
- 
+
 p4 <-
     D3.title1 %>%
     ggplot(aes(x=jurisdiction, y=avg.scale.score, alpha=picks,
@@ -363,7 +364,6 @@ ggplotly(p4, tooltip="text") %>%
                                       'hoverCompare', 'hoverClosestCartesian')) %>%
     layout(xaxis = list(fixedrange = TRUE),
            yaxis = list(fixedrange = TRUE))
-
 
 ```
 
@@ -419,12 +419,15 @@ ggplotly(p5, tooltip="text") %>%
 
 ### **Notes**
 
-
-**The figures on this page contrast schools that receive no Title 1 funds at all with Title 1 schools where fewer than 40% of students are low-income.**
-
 Title 1 of the Elementary and Secondary Education Act provides funds to school systems with high percentages of students from low income families so that these schools can give extra instructional support for low-achieving children. There are specific formula that determine whether a school qualifies for Title 1 funds. These vary somewhat for the four Title 1 funding programs, but all take into account the proportion of low-income students in the school, as well as the governing state's own funding formula.
 
 In general, a school receiving Title 1 funds is required to focus expendature of that money on students at greatest risk of academic difficulties. But, if low-income students make up more than 40% of a school's student population, then it may use Title 1 funds throughout the school as a whole. 
+
+**The figures on this page contrast schools that receive no Title 1 funds at all with Title 1 schools where fewer than 40% of students are low-income, and so their Title 1 funds are meant to be used for low-income students alone.**
+
+On this view, Connecticut's gap is 17th largest, only 5 rank positions worse than the national average.
+
+<sup>†</sup> Aggregation by Title 1 status is not available for 2003.
 
 https://nces.ed.gov/fastfacts/display.asp?id=158
 
@@ -472,3 +475,6 @@ package_tab %>%
     FDBpub::format_table(caption=caption, out_type=doc_type())
 
 ```
+
+The code used to build this dashboard and the interactive figures it contains can be found on github at: [https://github.com/davebraze/ct-achievement-gap](https://github.com/davebraze/ct-achievement-gap).
+
