@@ -33,7 +33,7 @@ endpoint <- "https://www.nationsreportcard.gov/DataService/GetAdhocData.aspx"
 ## to build set of API calls, each for a portion of the desired query.
 api.calls <- map2_chr(.x=endpoint, .y=query0, .f=~modify_url(url=.x, query=.y))
 
-## Make the API calls and get back a list of return values
+## Make the API calls and get back a list of return values. May take a while to complete.
 resp <- map(api.calls, GET)
 
 ## Check that all API calls return status "Success"

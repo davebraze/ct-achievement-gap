@@ -37,14 +37,17 @@ theme_set(FDBpub::theme_fdbplot())
 
 ```
 
-```{r read-data}
- 
+```{r read-data, eval=FALSE}
+
+## Only need to run this chunk if there is new data. 
+## Should pull this code into a separate file.
+
 ##### 4th grade reading scores for each state by race/ethnicity
 ## Data downloaded manually from https://www.nationsreportcard.gov/ndecore/xplore/NDE
 ## See notes in that file.
 
 ## subgroups: race/ethnicity
-D0a <- read_xls(here("00-data-cache", "NDECoreExcel_Reading-Grade4-Raceethnicity-used-to-report-tr_20220208182109.Xls"),
+D0a <- read_xls(here("00-data", "00-xls-raw-data-cache", "NDECoreExcel_Reading-Grade4-Raceethnicity-used-to-report-tr_20220208182109.Xls"),
                 sheet=1, range="A9:D5097", col_types="text")
 D1a <-
     D0a %>%
@@ -56,7 +59,7 @@ D1a <-
            avg.scale.score = as.numeric(avg.scale.score))
 
 ## All students combined
-D0b <- read_xls(here("00-data-cache", "NDECoreExcel_Reading, Grade 4, All students - 2_20220208181010.Xls"),
+D0b <- read_xls(here("00-data", "00-xls-raw-data-cache", "NDECoreExcel_Reading, Grade 4, All students - 2_20220208181010.Xls"),
                 sheet=1, range="A9:D857", col_types="text")
 D1b <-
     D0b %>%
@@ -68,7 +71,7 @@ D1b <-
            avg.scale.score = as.numeric(avg.scale.score))
 
 ## subgroups: Title 1
-D0c <- read_xls(here("00-data-cache", "NDECoreExcel_Reading, Grade 4, Receive Title I funding_20220211224354.Xls"),
+D0c <- read_xls(here("00-data", "00-xls-raw-data-cache", "NDECoreExcel_Reading, Grade 4, Receive Title I funding_20220211224354.Xls"),
                 sheet=1, range="A9:D2553", col_types="text")
 
 D1c <-
@@ -85,6 +88,7 @@ D1c <-
            )  %>%
     arrange(jurisdiction, year, title1) 
 
+
 ## race/enthnicity
 D2 <-
     full_join(D1a, D1b) %>%
@@ -95,6 +99,30 @@ D2 <-
 
 ## title 1
 D3 <- D1c
+
+saveRDS(D2, file=here::here("00-data", "01-xls-processed-data", "D2.rds"),
+        compress=FALSE)
+saveRDS(D3, file=here::here("00-data", "01-xls-processed-data", "D3.rds"),
+        compress=FALSE)
+
+##### data.frames D2 and D3 contain the clean and tidy data to be saved out for visualization. 
+
+saveRDS(D2, file=here::here("00-data", "01-xls-processed-data", "D2.rds"),
+        compress=FALSE)
+saveRDS(D3, file=here::here("00-data", "01-xls-processed-data", "D3.rds"),
+        compress=FALSE)
+
+write.csv(D2, file=here::here("00-data", "01-xls-processed-data", "D2.csv"),
+        row.names=FALSE)
+write.csv(D3, file=here::here("00-data", "01-xls-processed-data", "D3.csv"),
+        row.names=FALSE)
+
+```
+
+```{r read-preprocessed-data}
+
+D2 <- readRDS(file=here::here("00-data", "01-xls-processed-data", "D2.rds"))
+D3 <- readRDS(file=here::here("00-data", "01-xls-processed-data", "D3.rds"))
 
 ```
 
