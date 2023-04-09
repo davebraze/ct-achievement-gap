@@ -471,7 +471,7 @@ The National Assessment of Educational Progress (NAEP) is a federally mandated p
 
 Periodic reports based on NAEP results are commonly known as **The Nation's Report Card**. These reports  aggregate data at the state level. The NCES does not release NAEP results for individual students, classrooms, or schools. For each state, NCES does report aggregate NAEP results for various demographic groups, including divisions by gender, socioeconomic status, and race/ethnicity. 
 
-Assessment of mathematics, reading, and science takes place in odd numbered calendar years. Test results for these core subjects are collected for grades 4, 8, and 12. Assessment of other subjects less frequently and in fewer grades, and typically in even numbered years. Subjects include the arts, civics, economics, geography, technology and engineering, and U.S. history.
+Assessment of mathematics, reading, and science takes place in odd numbered calendar years. Test results for these core subjects are collected for grades 4, 8, and 12. Assessment of other subjects occurs less frequently and in fewer grades, and typically in even numbered years. Subjects include the arts, civics, economics, geography, technology and engineering, and U.S. history.
 
 ## Column {data-width=250}
 
