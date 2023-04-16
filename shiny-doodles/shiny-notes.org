@@ -1,0 +1,129 @@
+* ggplot > ggplotly > shiny 
+Sort of works, including onhover tooltips, but the plotly figure wants to 'pop out' of the main shiny web page. I don't know if there's a work-around for that or not. 
+
+* UI Configurations
+
+Multi-page shiny apps can be built natively using the tabsetPanel() approach. Possible alternatives can be found in:
++ {shiny.router}
++ {blaze}
++ {brochure}
++ {shinydashboard}
+
+Other packages that may be useful when building shiny apps.
+
++ {golem}
++ {gargoyle}
++ {whereami}
+
+
+
+** fluidPage >> fluidRow >> column
+
+Single page shiny app.
+
+#+begin_src R :session *R:fred* :async 
+  library(shiny)
+  
+  ui <- fluidPage(
+      titlePanel("App Title"),
+      
+      fluidRow(
+          column(2,
+                 ## controls
+                 h3("Controls"),
+                 selectInput("selected_year", "YEAR:",
+                             choices = 2003:2019,
+                             selected = 2019)
+               , selectInput("selected_juris", "JURISDICTION:",
+                             choices = LETTERS,
+                             selected = "C")
+               , actionButton("quit", "QUIT")
+                 ),
+          column(7,
+                 ## plots
+                 h1("Upper Panel"), h2("Figure 1")
+               , h1("Lower Panel"), h2("Figure 2")
+                 ),
+          column(3,
+                 ## explanation
+                 h4("Upper Panel"),
+                 p("paragraph 1"),
+                 p("paragraph 2"),
+                 p("paragraph 3"),
+
+                 h4("Lower Panel"),
+                 p("Lone paragraph"))
+      )
+  )
+  
+  server <- function(input, output) {
+      ## server code here
+      observeEvent(input$quit, {
+          stopApp()
+      })
+  }
+
+  shinyApp(ui, server)
+
+#+end_src
+
+#+RESULTS:
+
+** tabsetPanel >> tabPanel|navlistpanel >> fluidPage >> fluidRow >> column
+
+Multi-page shiny app.
+
+#+begin_src R :session *R:alice* :async 
+
+  library(shiny)
+
+  ui <- fluidPage(
+      titlePanel("My App"),
+      tabsetPanel(
+      ## navlistPanel( ## orient tab selectors to RHS instead of Top.
+          tabPanel("Tab 1",
+                   fluidPage(
+                       fluidRow(
+                           column(2,
+                                  ## controls
+                                  h3("Controls"),
+                                  selectInput("selected_year", "YEAR:",
+                                              choices = 2003:2019,
+                                              selected = 2019)
+                                , selectInput("selected_juris", "JURISDICTION:",
+                                              choices = LETTERS,
+                                              selected = "C")
+                                , actionButton("quit", "QUIT")
+                                  ),
+                           column(7,
+                                  ## plots
+                                  h1("Upper Panel"), h2("Figure 1")
+                                , h1("Lower Panel"), h2("Figure 2")
+                                  ),
+                           column(3,
+                                  h4("Upper Panel")
+                                , p("paragraph 1")
+                                , p("paragraph 2")
+                                , p("paragraph 3")
+                                , h4("Lower Panel")
+                                , p("Lone paragraph")
+                                  )
+                       )))
+        , tabPanel("Tab 2",
+                   fluidPage(
+                       h1("Content for Tab 2 here")
+                   ))))
+
+  server <- function(input, output) {
+      ## server code here
+      observeEvent(input$quit, {
+          stopApp()
+      })
+  }
+
+  shinyApp(ui, server)
+
+#+end_src
+
+#+RESULTS:
+
