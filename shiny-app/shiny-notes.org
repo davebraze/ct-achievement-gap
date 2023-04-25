@@ -1,7 +1,26 @@
-* ggplot > ggplotly > shiny 
-Sort of works, including onhover tooltips, but the plotly figure wants to 'pop out' of the main shiny web page. I don't know if there's a work-around for that or not. 
+* Deploy to www.shinyapps.io
 
-* UI Configurations
+See https://www.shinyapps.io/admin/#/dashboard for details.
+
+On first setting up an account, the local install of {rsconnect} must be authorized using a token and secret. After that initial setup, token/secret pairs can be managed on the https://www.shinyapps.io/admin/#/tokens page for the relevent account.
+
+Once the account is authorized, an app can be deployed to shinyapps.io by calling:
+
+
+#+begin_src R
+  
+  rsconnect::setAccountInfo(name='davebraze', token='8861117FB51FF2EBA5C4A42307E2A8A1',
+                            secret='l5ucCzqD2fYdM8YfE0i/99fZ2vjgqIHkFw4PgPP6')
+  
+  ## rsconnect::deployApp('path/to/your/app')
+
+  rsconnect::deployApp(here::here())
+  
+#+end_src
+
+
+
+Y* UI Configurations
 
 Multi-page shiny apps can be built natively using the tabsetPanel() approach. Possible alternatives can be found in:
 + {shiny.router}

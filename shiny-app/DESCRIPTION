@@ -1,0 +1,33 @@
+Package: naepshinyapp
+Title: NAEP 4TH Grade Reading
+Version: 0.0.0.9000
+Authors@R: 
+    person("David", "Braze", email = "davebraze@gmail.com", role = c("aut", "cre"))
+Description: A sketch of a dashboard for exploration of NAEP reading scores by state.
+License: MIT
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.0
+Depends: 
+    R (>= 4.0.0),
+    shiny,
+    ggplot2,
+    dplyr,
+    forcats,
+    here,
+    MetBrewer,
+    plotly,
+    sessioninfo
+Imports: 
+    shiny,
+    ggplot2,
+    dplyr,
+    forcats,
+    here,
+    MetBrewer,
+    plotly,
+    sessioninfo
+Suggests: 
+    testthat
+VignetteBuilder: knitr
+

@@ -1,23 +1,51 @@
+library(shiny)
+library(ggplot2)
+library(dplyr)
+library(forcats)
+library(MetBrewer)
+library(plotly)
+library(here)
+library(sessioninfo)
+
+## Read data file
+df0 <-
+    read.csv(here::here("data", "D2.csv")) %>%
+    filter(year >= 2003)
+
+ylimits <- range(df0$avg.scale.score, na.rm = TRUE)
+
 ui <- fluidPage(
     titlePanel("4th Grade NAEP Reading Score Gap by State"),
     fluidRow(
         column(2, ## controls
                h3("Controls"),
                selectInput("selected_year", "YEAR:",
-                           choices = unique(data$year),
-                           selected = max(data$year))
+                           choices = unique(df0$year),
+                           selected = max(df0$year))
              , selectInput("selected_juris", "JURISDICTION:",
-                           choices = unique(data$jurisdiction),
+                           choices = unique(df0$jurisdiction),
                            selected = "Connecticut")
              , actionButton("quit", "QUIT")
                ),
         column(10,
                tabsetPanel(
-                   tabPanel("Race Gap",
+                   tabPanel("Overall Scores",
                             fluidRow(
                                 column(7, ## plots
                                        plotlyOutput("naep_by_state")
-                                     , plotlyOutput("ct_naep_by_year")
+                                       ),
+                                column(3, ## Explainer
+                                       h4("Notes"),
+                                       p("This figure shows average NAEP 4th grade reading scores by state, plus the District of Columbia (DC) and the Dept. of Defence Educational Authority (DoDEA)."),
+                                       p("The selected jursidiction is highlighted in blue. The national average is in red."),
+                                       p("Hover over data points for exact averages and ranks (lower rank is better).")
+                                       )
+                            )),
+                   tabPanel("Race Gap",
+                            fluidRow(
+                                column(7, ## plots
+                                       plotlyOutput("naep_gap_by_state")
+                                     , plotlyOutput("selected_juris_naep_gap_by_year")
                                        ),
                                 column(3, ## Explainer
                                        h4("Upper Panel"),
@@ -28,8 +56,7 @@ ui <- fluidPage(
                                        h4("Lower Panel"),
                                        p(paste0("The lower figure shows the magnitude of the achievement gap for the selected jurisdiction (NAEP 4th grade reading scores / White vs. African American students) over the most recent 18 year period."))
                                        )
-                            )
-                            ),
+                            )),
                    tabPanel("About",
                             fluidRow(
                                 column(4,
@@ -42,7 +69,7 @@ ui <- fluidPage(
                                        ),
                                 column(3,
                                        h3("About the Author"),
-                                       p("David Braze is a researcher and consultant with a background in linguistics and reading research. He has more than 25 years experience investigating the cognitive foundations of language, literacy, and educational achievement, including 17 years as a Senior Research Scientist at Haskins Laboratories. His research at Haskins, funded by the National Institutes of Health, emphasized the neurobiology of language and reading and applications to education. Dr. Braze consults for business, government, and non-profit sectors.")
+                                       p("David Braze is a researcher and consultant with a background data science, linguistics, and reading research. He has more than 25 years experience using data-driven approaches to study the cognitive foundations of language and educational achievement, including 17 years as a Senior Research Scientist at Haskins Laboratories. His research at Haskins, funded by the National Institutes of Health, emphasized the neurobiology of language and reading and applications to education. Dr. Braze consults for business, government, and non-profit sectors.")
                                        ),
                                 column(3,
                                        h3("About the Software"),
